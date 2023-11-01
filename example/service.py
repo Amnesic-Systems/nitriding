@@ -9,12 +9,14 @@ nitriding_url = "http://127.0.0.1:8080/enclave/ready"
 def signal_ready():
     r = urllib.request.urlopen(nitriding_url)
     if r.getcode() != 200:
-        raise Exception("Expected status code %d but got %d" %
-                        (requests.status_codes.codes.ok, r.status_code))
+        raise Exception(
+            "Expected status code %d but got %d"
+            % (requests.status_codes.codes.ok, r.status_code)
+        )
 
 
 def fetch_addr():
-    url = "https://raw.githubusercontent.com/brave/nitriding-daemon/master/README.md"
+    url = "https://raw.githubusercontent.com/NullHypothesis/nitriding/master/README.md"
     with urllib.request.urlopen(url) as f:
         print("[py] Fetched %d bytes of README.md." % len(f.read(100)))
 

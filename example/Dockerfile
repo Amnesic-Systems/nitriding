@@ -5,7 +5,7 @@ FROM golang:1.20 as builder
 WORKDIR /
 
 # Clone the repository and build the stand-alone nitriding executable.
-RUN git clone https://github.com/brave/nitriding-daemon.git
+RUN git clone https://github.com/NullHypothesis/nitriding.git
 RUN make -C nitriding-daemon/ nitriding
 
 # Use the intermediate builder image to add our files.  This is necessary to
