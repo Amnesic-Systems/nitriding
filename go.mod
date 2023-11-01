@@ -1,6 +1,6 @@
 module github.com/NullHypothesis/nitriding
 
-go 1.21.3
+go 1.21
 
 require (
 	github.com/containers/gvisor-tap-vsock v0.5.0
