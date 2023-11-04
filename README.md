@@ -41,7 +41,7 @@ Nitriding provides the following features:
 
 * AWS Nitro Enclaves only provide a highly constrained
   [VSOCK channel](https://docs.aws.amazon.com/enclaves/latest/user/nitro-enclave-concepts.html#term-socket)
-  between the enclave and its host.  Nitriding creates TAP interface inside the
+  between the enclave and its host.  Nitriding creates a TAP interface inside the
   enclave, allowing your application to transparently access the Internet
   without having to worry about VSOCK, port forwarding, or tunneling.
 
