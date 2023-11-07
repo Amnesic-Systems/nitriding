@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"sync"
 )
 
 var (
@@ -174,14 +175,18 @@ func runAppCommand(appCmd string, stdoutFunc, stderrFunc func(string)) {
 	if err != nil {
 		elog.Fatalf("Failed to obtain stderr pipe for enclave application: %v", err)
 	}
-	go forwardOutput(stderr, stderrFunc, "stderr")
 
 	// Print the enclave application's stdout.
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		elog.Fatalf("Failed to obtain stdout pipe for enclave application: %v", err)
 	}
-	go forwardOutput(stdout, stdoutFunc, "stdout")
+
+	var forwardWg sync.WaitGroup
+	forwardWg.Add(2)
+	defer forwardWg.Wait()
+	go forwardOutput(stderr, stderrFunc, "stderr", &forwardWg)
+	go forwardOutput(stdout, stdoutFunc, "stdout", &forwardWg)
 
 	if err := cmd.Start(); err != nil {
 		elog.Fatalf("Failed to start enclave application: %v", err)
@@ -195,7 +200,8 @@ func runAppCommand(appCmd string, stdoutFunc, stderrFunc func(string)) {
 
 // forwardOutput continuously reads from the given Reader until an EOF occurs.
 // Each newly read line is passed to the given function f.
-func forwardOutput(readCloser io.ReadCloser, f func(string), output string) {
+func forwardOutput(readCloser io.ReadCloser, f func(string), output string, wg *sync.WaitGroup) {
+	defer wg.Done()
 	scanner := bufio.NewScanner(readCloser)
 	for scanner.Scan() {
 		f(scanner.Text())
