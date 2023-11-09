@@ -36,8 +36,8 @@ nitriding.  The following steps are necessary.
    or
    [ko](https://github.com/ko-build/ko) (for Go applications only).
    Take a look at [this
-   Makefile](https://github.com/brave/star-randsrv/blob/main/Makefile) to see
-   an application of kaniko.
+   Makefile](https://github.com/brave/star-randsrv/blob/05fe45f5a01f2c8fa2a0ab99a6d1e425476adaec/Makefile#L37-L44)
+   to see an application of kaniko.
 
 3. Bundle the freshly-compiled nitriding and your enclave application together
    with a Dockerfile.  The nitriding stand-alone executable must be invoked
