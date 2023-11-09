@@ -1,7 +1,7 @@
 ## Usage
 
-This document explains how you can build your enclave application on top of
-nitriding.  The following steps are necessary.
+The following steps are necessary to run your application inside an enclave,
+using nitriding.
 
 1. Make sure that your enclave application supports [reproducible
    builds](https://reproducible-builds.org); otherwise, users won't be able to
@@ -47,7 +47,7 @@ nitriding.  The following steps are necessary.
    example](../example/start.sh).  Second, you can tell nitriding to start your
    enclave application for you:
    ```
-   nitriding -appcmd "my-enclave-app -s foo"
+   nitriding -app-cmd "my-enclave-app -s foo"
    ```
    This instructs nitriding to invoke the command `my-enclave-app -s foo`.
    Nitriding keeps running as long as my-enclave-app is running.
@@ -59,11 +59,9 @@ nitriding.  The following steps are necessary.
    HTTP GET request to `http://127.0.0.1:8080/enclave/ready`.  The handler
    ignores URL parameters and responds with a status code 200 if the request
    succeeded.  Note that the port in this example, 8080, is controlled by
-   nitriding's `-intport` command line flag.  Ignore this paragraph if you did
+   nitriding's `-int-port` command line flag.  Ignore this paragraph if you did
    not use `-wait-for-app`.
 
 Finally, take a look at
-[this example application](/example)
-or
-[this production application](https://github.com/brave/star-randsrv/)
-to learn how one can build on top of nitriding.
+[this simple application](/example)
+for an example on how one can use nitriding.
