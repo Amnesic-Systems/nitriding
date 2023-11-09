@@ -43,11 +43,11 @@ func main() {
 		"FQDN of the enclave application (e.g., \"example.com\").")
 	flag.StringVar(&fqdnLeader, "fqdn-leader", "",
 		"FQDN of the leader enclave (e.g., \"leader.example.com\").  Setting this enables key synchronization.")
-	flag.StringVar(&appURL, "appurl", "",
+	flag.StringVar(&appURL, "app-url", "",
 		"Code repository of the enclave application (e.g., \"github.com/foo/bar\").")
 	flag.StringVar(&appWebSrv, "appwebsrv", "",
 		"Enclave-internal HTTP server of the enclave application (e.g., \"http://127.0.0.1:8081\").")
-	flag.StringVar(&appCmd, "appcmd", "",
+	flag.StringVar(&appCmd, "app-cmd", "",
 		"Launch enclave application via the given command.")
 	flag.StringVar(&prometheusNamespace, "prometheus-namespace", "",
 		"Prometheus namespace for exported metrics.")
@@ -59,7 +59,7 @@ func main() {
 		"Disables keep-alive connections for the HTTPS service.")
 	flag.BoolVar(&useVsockForExtPort, "vsock-ext", false,
 		"Listen on VSOCK interface for HTTPS port.")
-	flag.UintVar(&intPort, "intport", 8080,
+	flag.UintVar(&intPort, "int-port", 8080,
 		"Nitriding's enclave-internal HTTP port.  Only used by the enclave application.")
 	flag.UintVar(&hostProxyPort, "host-proxy-port", 1024,
 		"Port of proxy application running on EC2 host.")
