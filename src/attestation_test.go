@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/hf/nitrite"
 )
 
 func TestArePCRsIdentical(t *testing.T) {
@@ -77,5 +79,19 @@ func TestAttestationHashes(t *testing.T) {
 	offset := len(hashPrefix) + sha256.Size
 	if !bytes.Equal(s[offset:], expected) {
 		t.Fatalf("Expected application key hash of %x but got %x.", expected, s[offset:])
+	}
+}
+
+func TestIsEnclaveInDebugMode(t *testing.T) {
+	// Test case where PCR0 is all zeros (Debug Mode)
+	debugPCR := map[uint][]byte{0: make([]byte, 48)}
+	if isEnclaveInDebugMode(&nitrite.Document{PCRs: debugPCR}) != true {
+		t.Fatal("Enclave is not in debug mode.")
+	}
+
+	// Test case where PCR0 is not all zeros (Non-Debug Mode)
+	nonDebugPCR := map[uint][]byte{0: append(make([]byte, 47), 1)} // last byte is 1
+	if isEnclaveInDebugMode(&nitrite.Document{PCRs: nonDebugPCR}) != false {
+		t.Fatal("Failed to recognize non-debug mode when PCR0 is not all zeros.")
 	}
 }

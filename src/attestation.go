@@ -87,3 +87,16 @@ func arePCRsIdentical(ourPCRs, theirPCRs map[uint][]byte) bool {
 	}
 	return true
 }
+
+func isEnclaveInDebugMode(doc *nitrite.Document) bool {
+	pcr0, exists := doc.PCRs[0]
+	if !exists {
+		return false
+	}
+	for _, byteValue := range pcr0 {
+		if byteValue != 0 {
+			return false
+		}
+	}
+	return true
+}
