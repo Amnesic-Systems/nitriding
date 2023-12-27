@@ -1,4 +1,4 @@
-module github.com/NullHypothesis/nitriding
+module github.com/Amnesic-Systems/nitriding
 
 go 1.21
 
