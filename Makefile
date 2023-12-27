@@ -1,6 +1,6 @@
 prog = nitriding
-src_dir = src
-godeps = $(src_dir)/*.go $(src_dir)/go.mod $(src_dir)/go.sum
+src_dir = internal
+godeps = $(src_dir)/*.go *.go go.mod go.sum
 cover_out = cover.out
 cover_html = cover.html
 
@@ -8,12 +8,12 @@ all: $(prog)
 
 .PHONY: lint
 lint: $(godeps)
-	go vet -C $(src_dir) ./...
-	govulncheck -C $(src_dir) ./...
+	go vet ./...
+	govulncheck ./...
 
 .PHONY: test
 test: $(godeps)
-	go test -C $(src_dir) -race -cover ./...
+	go test -race -cover ./...
 
 .PHONY: coverage
 coverage: $(cover_html)
@@ -27,7 +27,6 @@ $(cover_html): $(cover_out)
 
 $(prog): $(godeps)
 	CGO_ENABLED=0 go build \
-		-C $(src_dir) \
 		-trimpath \
 		-ldflags="-s -w" \
 		-buildvcs=false \
@@ -35,6 +34,6 @@ $(prog): $(godeps)
 
 .PHONY: clean
 clean:
-	rm -f $(src_dir)/$(prog)
+	rm -f $(prog)
 	rm -f $(src_dir)/$(cover_out)
 	rm -f $(src_dir)/$(cover_html)
