@@ -4,52 +4,36 @@
 
 ---
 
-[![GoDoc](https://pkg.go.dev/badge/github.com/NullHypothesis/nitriding?utm_source=godoc)](https://pkg.go.dev/github.com/NullHypothesis/nitriding)
+[![GoDoc](https://pkg.go.dev/badge/github.com/Amnesic-Systems/nitriding?utm_source=godoc)](https://pkg.go.dev/github.com/Amnesic-Systems/nitriding)
 
-This Go tool kit makes it possible to run your application inside an
+Nitriding is a Go tool kit (consisting of two services) that helps you run your application inside an
 [AWS Nitro Enclave](https://aws.amazon.com/ec2/nitro/nitro-enclaves/).
 Let's assume that you built a Web service in Rust.  You can now use nitriding to
-move your Rust code into a secure enclave, making it possible for your users to
-remotely verify that you are in fact running the code that you claim to run.
-Nitriding provides the following features:
+move your Rust code into a Nitro Enclave, which provides two key security properties:
 
-* Automatically obtains an HTTPS certificate (either self-signed or via
-  [Let's Encrypt](https://letsencrypt.org))
-  for clients to securely connect to your enclave over the Internet.  Nitriding
-  can act as a TLS-terminating reverse HTTP proxy for your application, so your
-  application does not have to deal with obtaining certificates.
+1. At runtime, Nitro Enclaves are effectively a sealed black box. Nobody can observe your application's state at runtime: not you, not Amnesic Systems, and not even AWS. This makes it possible to process sensitive data _without ever seeing the data_.
+2. Optionally, using remote attestation, your users can verify (over the Internet) that you run the code you claim to run. This requires that your application is open source.
 
-* Automatically exposes an HTTPS endpoint for remote attestation.  After having
-  audited your enclave's source code, your users can conveniently verify the
-  enclave's image by using a tool like
-  [verify-enclave](https://github.com/brave-experiments/verify-enclave)
-  and running:
+The diagram below illustrates how nitriding works.
+Gray components are provided by AWS,
+blue components are provided by nitriding,
+the yellow component is provided by you,
+and the brown component is your user – if you have users.
+Nitriding helps you run your application (which is bundled as a Docker image)
+inside a Nitro Enclave while abstracting away the pitfalls of working with enclaves.
+In particular:
 
-   ```
-   make verify CODE=/path/to/code/ ENCLAVE=https://enclave.com/enclave/attestation
-   ```
+* Nitriding provides a [tap](https://docs.kernel.org/networking/tuntap.html) interface inside the enclave, enabling seamless networking for your application. Your application can listen for incoming connections and establish outgoing connections without having to worry about tunneling network traffic over the enclave's VSOCK interface.
 
-* Are you building an application that uses a protocol other than HTTP?  If so,
-  nitriding makes it possible to register a hash over your application's public
-  key material which is subsequently included in the
-  [attestation document](https://docs.aws.amazon.com/enclaves/latest/user/nitro-enclave-concepts.html#term-attestdoc).
-  This allows your users to verify that their connection is securely terminated
-  inside the enclave, regardless of the protocol that you are using.
+* Nitriding's TCP proxy does not see your network traffic; it blindly forwards end-to-end encrypted packets. If your application speaks HTTPS, nitriding can act as a TLS-terminating HTTP reverse proxy. If your application speaks another protocol, you are responsible for the encryption layer.
 
-* Provides an API to scale enclave applications horizontally while synchronizing
-  state between enclaves.
+* Nitriding exposes an HTTPS endpoint for remote attestation, allowing your users to verify over the Internet that you run the code you claim to run. You don't have to worry about the nuances of remote attestation.
 
-* AWS Nitro Enclaves only provide a highly constrained
-  [VSOCK channel](https://docs.aws.amazon.com/enclaves/latest/user/nitro-enclave-concepts.html#term-socket)
-  between the enclave and its host.  Nitriding creates a TAP interface inside the
-  enclave, allowing your application to transparently access the Internet
-  without having to worry about VSOCK, port forwarding, or tunneling.
+* While nitriding is built in Go, it is application-agnostic: As long as you can bundle your application in a Docker image, you can run it using nitriding. You are free to use your favorite tech stack.
 
-* Automatically initializes the enclave's entropy pool using the Nitro
-  hypervisor.
-
-To learn more about nitriding's trust assumptions, architecture, and build
-system, take a look at our [research paper](https://arxiv.org/abs/2206.04123).
+<div align="center">
+  <img src="https://github.com/Amnesic-Systems/nitriding/assets/1316283/6309c401-4494-4add-a48b-f9403c6fb2c2.png" alt="Nitriding architecture" width="600">
+</div>
 
 ## More documentation
 
@@ -59,3 +43,6 @@ system, take a look at our [research paper](https://arxiv.org/abs/2206.04123).
 * [Horizontal scaling](doc/key-synchronization.md)
 * [Example application](example/)
 * [Setup enclave EC2 host](doc/setup.md)
+
+To learn more about nitriding's trust assumptions, architecture, and build
+system, take a look at our [research paper](https://arxiv.org/abs/2206.04123).
