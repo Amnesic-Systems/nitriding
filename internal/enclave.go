@@ -334,7 +334,7 @@ func (e *Enclave) Start() error {
 		}
 	}
 
-	// Set up our networking environment which creates a TAP device that
+	// Set up our networking environment which creates a tun device that
 	// forwards traffic (via the VSOCK interface) to the EC2 host.
 	go runNetworking(e.cfg, e.stop)
 
