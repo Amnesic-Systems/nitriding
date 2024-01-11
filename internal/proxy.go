@@ -30,6 +30,11 @@ func runNetworking(c *Config, stop chan struct{}) {
 //  4. Spawn goroutines to forward traffic between the tun device and the proxy
 //     running on the host.
 func setupNetworking(c *Config, stop chan struct{}) error {
+	// parentCID determines the CID (analogous to an IP address) of the parent
+	// EC2 instance.  According to the AWS docs, it is always 3:
+	// https://docs.aws.amazon.com/enclaves/latest/user/nitro-enclave-concepts.html
+	const parentCID = 3
+
 	// Establish TCP-over-VSOCK connection with nitriding-proxy.
 	conn, err := vsock.Dial(parentCID, proxy.DefaultPort, nil)
 	if err != nil {
