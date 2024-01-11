@@ -49,7 +49,7 @@ func writeResolvconf() error {
 	}
 
 	// Our default gateway -- gvproxy -- also operates a DNS resolver.
-	c := fmt.Sprintf("nameserver 1.1.1.1\n")
+	c := "nameserver 1.1.1.1\n"
 	if err := os.WriteFile(file, []byte(c), 0644); err != nil {
 		return fmt.Errorf("failed to write file: %w", err)
 	}
