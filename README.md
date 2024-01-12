@@ -23,7 +23,7 @@ Nitriding helps you run your application (which is bundled as a Docker image)
 inside a Nitro Enclave while abstracting away the pitfalls of working with enclaves.
 In particular:
 
-* Nitriding provides a [tap](https://docs.kernel.org/networking/tuntap.html) interface inside the enclave, enabling seamless networking for your application. Your application can listen for incoming connections and establish outgoing connections without having to worry about tunneling network traffic over the enclave's VSOCK interface.
+* Nitriding provides a [tun](https://docs.kernel.org/networking/tuntap.html) interface inside the enclave, enabling seamless networking for your application. Your application can listen for incoming connections and establish outgoing connections without having to worry about tunneling network traffic over the enclave's VSOCK interface.
 
 * Nitriding's TCP proxy does not see your network traffic; it blindly forwards end-to-end encrypted packets. If your application speaks HTTPS, nitriding can act as a TLS-terminating HTTP reverse proxy. If your application speaks another protocol, you are responsible for the encryption layer.
 
@@ -43,6 +43,3 @@ In particular:
 * [Horizontal scaling](doc/key-synchronization.md)
 * [Example application](example/)
 * [Setup enclave EC2 host](doc/setup.md)
-
-To learn more about nitriding's trust assumptions, architecture, and build
-system, take a look at our [research paper](https://arxiv.org/abs/2206.04123).

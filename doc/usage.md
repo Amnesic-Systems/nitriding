@@ -11,23 +11,11 @@ using nitriding.
    reproducibly.
 
 2. Set up
-   [this proxy application](https://github.com/containers/gvisor-tap-vsock/tree/main/cmd/gvproxy)
+   [nitriding-proxy](https://github.com/Amnesic-Systems/nitriding-proxy)
    on the EC2 host.  Run it as follows:
    ```
-   gvproxy -listen vsock://:1024 -listen unix:///tmp/network.sock
+   sudo ./nitriding-proxy
    ```
-   Next, tell the proxy application to forward port 443 to nitriding.
-   ```
-   curl \
-     --unix-socket /tmp/network.sock \
-     http:/unix/services/forwarder/expose \
-     -X POST \
-     -d '{"local":":443","remote":"192.168.127.2:443"}'
-   ```
-   In case you're wondering, 192.168.127.2 is nitriding's static IP address in
-   the private network between gvproxy and nitriding.  Does your enclave
-   application expose any other ports?  If so, you have to forward these ports
-   too.
 
 3. Build the nitriding executable by running `make nitriding`.
    (Then, run `./nitriding -help` to see a list of command line options.)
@@ -36,15 +24,15 @@ using nitriding.
    or
    [ko](https://github.com/ko-build/ko) (for Go applications only).
    Take a look at [this
-   Makefile](https://github.com/brave/star-randsrv/blob/05fe45f5a01f2c8fa2a0ab99a6d1e425476adaec/Makefile#L37-L44)
+   Makefile](https://github.com/Amnesic-Systems/example-enclave-applications/blob/baceb32edb053581a4619be94c79028409ee3c20/iperf3-enclave/Makefile#L14-L21)
    to see an application of kaniko.
 
-3. Bundle the freshly-compiled nitriding and your enclave application together
-   with a Dockerfile.  The nitriding stand-alone executable must be invoked
+3. Bundle nitriding and your enclave application together
+   in a Dockerfile.  The nitriding stand-alone executable must be invoked
    first, followed by your application.  There are two ways to go about this.
    First, you can create a shell script that first starts nitriding in the
    background, followed by the enclave application.  [Here's an
-   example](../example/start.sh).  Second, you can tell nitriding to start your
+   example](https://github.com/Amnesic-Systems/example-enclave-applications/blob/baceb32edb053581a4619be94c79028409ee3c20/iperf3-enclave/start.sh).  Second, you can tell nitriding to start your
    enclave application for you:
    ```
    nitriding -app-cmd "my-enclave-app -s foo"

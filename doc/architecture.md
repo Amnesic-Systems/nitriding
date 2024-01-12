@@ -10,7 +10,7 @@ ec2->>ec2: Set up proxy
 
 Note over ec2,app: Enclave setup starts
 
-nitriding->>ec2: Establish TAP tunnel
+nitriding->>ec2: Establish tun tunnel
 nitriding->>nitriding: Set up enclave-internal Web server
 
 nitriding->>+ec2: Packet forwarding

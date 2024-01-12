@@ -32,10 +32,6 @@ const (
 	acmeCertCacheDir    = "cert-cache"
 	certificateOrg      = "AWS Nitro enclave application"
 	certificateValidity = time.Hour * 24 * 356
-	// parentCID determines the CID (analogous to an IP address) of the parent
-	// EC2 instance.  According to the AWS docs, it is always 3:
-	// https://docs.aws.amazon.com/enclaves/latest/user/nitro-enclave-concepts.html
-	parentCID = 3
 	// The following paths are handled by nitriding.
 	pathRoot        = "/enclave"
 	pathAttestation = "/enclave/attestation"
@@ -334,7 +330,7 @@ func (e *Enclave) Start() error {
 		}
 	}
 
-	// Set up our networking environment which creates a TAP device that
+	// Set up our networking environment which creates a tun device that
 	// forwards traffic (via the VSOCK interface) to the EC2 host.
 	go runNetworking(e.cfg, e.stop)
 
