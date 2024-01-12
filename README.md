@@ -43,6 +43,3 @@ In particular:
 * [Horizontal scaling](doc/key-synchronization.md)
 * [Example application](example/)
 * [Setup enclave EC2 host](doc/setup.md)
-
-To learn more about nitriding's trust assumptions, architecture, and build
-system, take a look at our [research paper](https://arxiv.org/abs/2206.04123).
