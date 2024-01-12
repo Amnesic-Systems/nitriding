@@ -4,8 +4,6 @@
 
 ---
 
-[![GoDoc](https://pkg.go.dev/badge/github.com/Amnesic-Systems/nitriding?utm_source=godoc)](https://pkg.go.dev/github.com/Amnesic-Systems/nitriding)
-
 Nitriding is a Go tool kit (consisting of two services) that helps you run your application inside an
 [AWS Nitro Enclave](https://aws.amazon.com/ec2/nitro/nitro-enclaves/).
 Let's assume that you built a Web service in Rust.  You can now use nitriding to
