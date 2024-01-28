@@ -10,7 +10,6 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-	"sync"
 
 	"github.com/Amnesic-Systems/nitriding/internal"
 )
@@ -137,10 +136,7 @@ func main() {
 	// 2) The enclave application is started by a shell script (which also
 	//    starts nitriding).  In this case, we simply block forever.
 	if appCmd != "" {
-		f := func(s string) {
-			elog.Printf("Application says: %s", s)
-		}
-		runAppCommand(appCmd, f, f)
+		runAppCommand(appCmd, func(s string) { elog.Printf("> %s", s) })
 	} else {
 		// Block forever.
 		<-make(chan struct{})
@@ -151,48 +147,36 @@ func main() {
 // runAppCommand (i) runs the given command, (ii) waits until the command
 // finished execution, and (iii) in the meanwhile prints the command's stdout
 // and stderr.
-func runAppCommand(appCmd string, stdoutFunc, stderrFunc func(string)) {
-	elog.Printf("Invoking the enclave application.")
+func runAppCommand(appCmd string, f func(string)) {
+	var (
+		err            error
+		stdout, stderr io.ReadCloser
+	)
+	elog.Printf("Invoking command: %s", appCmd)
 	args := strings.Split(appCmd, " ")
 	cmd := exec.Command(args[0], args[1:]...)
 
-	// Print the enclave application's stderr.
-	stderr, err := cmd.StderrPipe()
-	if err != nil {
-		elog.Fatalf("Failed to obtain stderr pipe for enclave application: %v", err)
+	if stderr, err = cmd.StderrPipe(); err != nil {
+		elog.Fatalf("Error obtaining stderr pipe: %v", err)
 	}
-
-	// Print the enclave application's stdout.
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		elog.Fatalf("Failed to obtain stdout pipe for enclave application: %v", err)
+	if stdout, err = cmd.StdoutPipe(); err != nil {
+		elog.Fatalf("Error obtaining stdout pipe: %v", err)
 	}
-
-	var forwardWg sync.WaitGroup
-	forwardWg.Add(2)
-	defer forwardWg.Wait()
-	go forwardOutput(stderr, stderrFunc, "stderr", &forwardWg)
-	go forwardOutput(stdout, stdoutFunc, "stdout", &forwardWg)
 
 	if err := cmd.Start(); err != nil {
-		elog.Fatalf("Failed to start enclave application: %v", err)
+		elog.Fatalf("Error starting application: %v", err)
+	}
+
+	s := bufio.NewScanner(io.MultiReader(stdout, stderr))
+	for s.Scan() {
+		f(s.Text())
+	}
+	if err := s.Err(); err != nil {
+		elog.Printf("Error reading from application: %v", err)
 	}
 
 	if err := cmd.Wait(); err != nil {
 		elog.Fatalf("Enclave application exited with non-0 exit code: %v", err)
 	}
 	elog.Println("Enclave application exited.")
-}
-
-// forwardOutput continuously reads from the given Reader until an EOF occurs.
-// Each newly read line is passed to the given function f.
-func forwardOutput(readCloser io.ReadCloser, f func(string), output string, wg *sync.WaitGroup) {
-	defer wg.Done()
-	scanner := bufio.NewScanner(readCloser)
-	for scanner.Scan() {
-		f(scanner.Text())
-	}
-	if err := scanner.Err(); err != nil {
-		elog.Printf("Error reading from enclave application's %s: %v", output, err)
-	}
 }
