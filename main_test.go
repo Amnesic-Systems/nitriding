@@ -11,9 +11,8 @@ func TestSpawnAppProcess(t *testing.T) {
 	f := func(s string) {
 		output = append(output, strings.TrimSpace(s))
 	}
-	dummy := func(string) {}
 
-	runAppCommand("seq 1 3", f, dummy)
+	runAppCommand("seq 1 3", f)
 	if len(output) != len(expected) {
 		t.Fatalf("Expected slice length %d but got %d.", len(expected), len(output))
 	}
