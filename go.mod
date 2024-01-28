@@ -3,7 +3,7 @@ module github.com/Amnesic-Systems/nitriding
 go 1.21
 
 require (
-	github.com/Amnesic-Systems/nitriding-proxy v0.0.0-20240111152454-5a233f2173d1
+	github.com/Amnesic-Systems/nitriding-proxy v0.1.0
 	github.com/go-chi/chi v1.5.5
 	github.com/go-chi/chi/v5 v5.0.11
 	github.com/hf/nitrite v0.0.0-20211104000856-f9e0dcc73703
@@ -11,7 +11,6 @@ require (
 	github.com/mdlayher/vsock v1.2.1
 	github.com/milosgajdos/tenus v0.0.3
 	github.com/prometheus/client_golang v1.18.0
-	github.com/vishvananda/netlink v1.2.1-beta.2
 	golang.org/x/crypto v0.18.0
 	golang.org/x/sys v0.16.0
 )
@@ -28,7 +27,6 @@ require (
 	github.com/prometheus/client_model v0.5.0 // indirect
 	github.com/prometheus/common v0.45.0 // indirect
 	github.com/prometheus/procfs v0.12.0 // indirect
-	github.com/vishvananda/netns v0.0.4 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	golang.org/x/net v0.20.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect

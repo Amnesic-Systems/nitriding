@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	proxy "github.com/Amnesic-Systems/nitriding-proxy"
@@ -34,6 +35,7 @@ func setupNetworking(c *Config, stop chan struct{}) error {
 	// EC2 instance.  According to the AWS docs, it is always 3:
 	// https://docs.aws.amazon.com/enclaves/latest/user/nitro-enclave-concepts.html
 	const proxyCID = 3
+	var wg sync.WaitGroup
 
 	// Establish TCP-over-VSOCK connection with nitriding-proxy.
 	conn, err := vsock.Dial(proxyCID, proxy.DefaultPort, nil)
@@ -44,16 +46,12 @@ func setupNetworking(c *Config, stop chan struct{}) error {
 	elog.Println("Established TCP connection with nitriding-proxy.")
 
 	// Create and configure the tun device.
-	tun, err := proxy.CreateTun()
+	tun, err := proxy.SetupTunAsEnclave()
 	if err != nil {
-		return fmt.Errorf("failed to create tun device: %w", err)
+		return fmt.Errorf("failed to set up tun device: %w", err)
 	}
 	defer tun.Close()
-	elog.Println("Created tun device.")
-	if err = proxy.SetupTunAsEnclave(); err != nil {
-		return fmt.Errorf("failed to configure tun device: %w", err)
-	}
-	elog.Println("Configured tun device.")
+	elog.Println("Set up tun device.")
 
 	// Configure our DNS resolver.
 	if err = writeResolvconf(); err != nil {
@@ -63,8 +61,10 @@ func setupNetworking(c *Config, stop chan struct{}) error {
 
 	// Spawn goroutines that forward traffic.
 	errCh := make(chan error, 1)
-	go proxy.VsockToTun(conn, tun, errCh)
-	go proxy.TunToVsock(tun, conn, errCh)
+	wg.Add(2)
+	defer wg.Wait()
+	go proxy.VsockToTun(conn, tun, errCh, &wg)
+	go proxy.TunToVsock(tun, conn, errCh, &wg)
 	elog.Println("Started goroutines to forward traffic.")
 
 	select {
