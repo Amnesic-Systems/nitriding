@@ -3,7 +3,7 @@ module github.com/Amnesic-Systems/nitriding
 go 1.21
 
 require (
-	github.com/Amnesic-Systems/nitriding-proxy v0.1.0
+	github.com/Amnesic-Systems/nitriding-proxy v0.1.1
 	github.com/go-chi/chi v1.5.5
 	github.com/go-chi/chi/v5 v5.0.11
 	github.com/hf/nitrite v0.0.0-20211104000856-f9e0dcc73703
