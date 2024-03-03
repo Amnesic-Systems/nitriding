@@ -1,5 +1,7 @@
 github.com/Amnesic-Systems/nitriding-proxy v0.1.0 h1:ek6L7D45R5HFDDkNHT0gT8zqFxtAmwppg/2668108Kk=
 github.com/Amnesic-Systems/nitriding-proxy v0.1.0/go.mod h1:IMq3AGc+tKDU+KbXKc2icAFNiyoQrICJb61fcXc6r1g=
+github.com/Amnesic-Systems/nitriding-proxy v0.1.1 h1:iDyhRPbRRzs7VwJW9KUw1SFJprK015pt/wwopHSY/Ko=
+github.com/Amnesic-Systems/nitriding-proxy v0.1.1/go.mod h1:IMq3AGc+tKDU+KbXKc2icAFNiyoQrICJb61fcXc6r1g=
 github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
 github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
 github.com/cespare/xxhash/v2 v2.2.0 h1:DC2CZ1Ep5Y4k3ZQ899DldepgrayRUGE6BBZ/cd9Cj44=
