@@ -21,7 +21,7 @@ var (
 func main() {
 	var fqdn, fqdnLeader, appURL, appWebSrv, appCmd, prometheusNamespace, mockCertFp string
 	var extPubPort, extPrivPort, intPort, hostProxyPort, prometheusPort uint
-	var useACME, waitForApp, useProfiling, useVsockForExtPort, disableKeepAlives, debug bool
+	var useACME, waitForApp, useProfiling, useVsockForExtPort, disableKeepAlives, debug, loader bool
 	var err error
 
 	flag.StringVar(&fqdn, "fqdn", "",
@@ -60,6 +60,8 @@ func main() {
 		"Print extra debug messages and use dummy attester for testing outside enclaves.")
 	flag.StringVar(&mockCertFp, "mock-cert-fp", "",
 		"Mock certificate fingerprint to use in attestation documents (hexadecimal)")
+	flag.BoolVar(&loader, "loader", false,
+		"Dynamically load enclave application.")
 	flag.Parse()
 
 	if fqdn == "" {
@@ -100,6 +102,7 @@ func main() {
 		UseProfiling:        useProfiling,
 		MockCertFp:          mockCertFp,
 		Debug:               debug,
+		Loader:              loader,
 	}
 	if appURL != "" {
 		u, err := url.Parse(appURL)
